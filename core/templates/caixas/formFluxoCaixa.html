@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Fluxo de Caixa{% endblock titulo %}
+
+{% block conteudo %}
+<div class="container">
+<form class="form-horizontal" action="/caixas/fluxo/" method="POST" role="form">{% csrf_token %}
+
+            <div class="col-sm-4">
+                <label for="datetimepicker"><b>Data Início</b></label>
+                <p class="visible-print">{{ data_inicial|date:"d/m/Y H:i:s" }}</p>
+                <div class="input-group date hidden-print datetimepicker">
+                    <input type="text" name="data_inicial" value='{{ data_inicial|date:"d/m/Y H:i:s" }}' class="form-control">
+                    <span class="input-group-addon add-on glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <label for="datetimepicker" class=""><b>Data Final</b></label>
+                <p class="visible-print">{{ data_final|date:"d/m/Y H:i:s" }}</p>
+                <div class="input-group date hidden-print datetimepicker">
+                    <input type="text" name="data_final" value='{{ data_final|date:"d/m/Y H:i:s" }}' class="form-control">
+                    <span class="input-group-addon add-on glyphicon glyphicon-calendar"></span>
+                </div>
+            </div>
+
+            <div class="col-md-1">
+                <br />
+                <button type="submit" class="btn btn-primary hidden-print"><span class="glyphicon glyphicon-search"></span></button>
+            </div>
+</form>
+</div>
+
+<hr>
+<div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Pessoa</th>
+            <th>Descrição</th>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>R$</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for conta in contas %}
+          <tr>
+            <td><a href="/caixas/editar/{{ conta.pk }}">{{ conta.pessoa.nome }}</a></td>
+            <td>{{ conta.descricao }}</td>
+            <td>{{ conta.data|date:"d/m/Y" }}</td>
+            <td>{{ conta.tipo }}</td>
+            <td>{{ conta.valor }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+        {% if total != NULL and contas|length > 0 %}
+        <tfoot>
+         <tr class="success">
+            <th>TOTAL:</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>{{ total }}</th>
+        </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+</div><!-- FIM TABELA -->
+{% if total != NULL and contas|length > 0 %}
+ <button type="submit" onClick="window.print()" class="btn btn-info col-md-offset-11 col-sm-1 hidden-print">Imprimir</button>
+{% endif %}
+
+{% endblock conteudo %}
